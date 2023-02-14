@@ -26,40 +26,41 @@ const gameBoard = (() => {
 
 // displayController module to handle DOM manipulation
 const displayController = (() => {
-  let mark = 'X'
   let winner = false
-  const nextTurn = { X: 'O', O: 'X' }
+  const user = playerFactory('user', 'X')
+  const ai = playerFactory('ai', 'O')
+  const nextTurn = { user: ai, ai: user }
+  let currentTurn = user
   const cells = document.querySelectorAll('.cell')
   const resetButton = document.querySelector('.reset-button')
   const turnText = document.querySelector('#turn')
 
-  /* @param index: the index of the cell in the gameBoard array
-      * @param mark: the mark of the player
-      * @return: none
-      * changes the display of the gameBoard module for the particular cell
-  * */
-  const changeGameBoardDisplay = (index, mark) => {
-    cells[index - 1].textContent = mark
-    gameBoard.setBoard(index - 1, mark)
-  }
-  
-  /* @param mark: the mark of the player
-      * @return: none
-      * changes the display of the turn text
-      * */
-  const changeTurnText = (mark) => {
-    turnText.textContent = `${mark}'s turn`
+  // change the display of the cells when clicked
+  const changeGameBoardDisplay = (index, player) => {
+    cells[index - 1].textContent = player.mark
+    gameBoard.setBoard(index - 1, player.mark)
   }
 
+  // X goes first so user goes first
+
+  // change the turn text to be displayed on top of the board
+  const changeTurnText = (currentTurn) => {
+    console.log(currentTurn)
+    turnText.textContent = `$${currentTurn.mark}'s turn`
+  }
+
+  // resets the display of the cells when the reset button is clicked
   const changeDisplayOnReset = () => {
     cells.forEach((cell) => {
       cell.textContent = ''
     })
-    changeTurnText(mark)
-    mark = 'X'
+    turnText.textContent = 'X goes first'
+    currentTurn = user
     winner = false
   }
 
+  // checks for the winner: if there is 3 in a row, column, or diagonal
+  // of the same mark
   const checkForWinner = () => {
     const board = gameBoard.getBoard()
     // check for winning combos ie rows, columns, diagonals
@@ -110,14 +111,15 @@ const displayController = (() => {
         // get the id of the cell
         const cellId = Number(e.target.id)
         // change the display of the cell
-        changeGameBoardDisplay(cellId, mark)
+        changeGameBoardDisplay(cellId, currentTurn)
 
         // check for winner
         checkForWinner()
-        // change the mark if the game is not over
+        // change the user if the game is not over
         if (!winner) {
-          mark = nextTurn[mark]
-          changeTurnText(mark)
+          currentTurn = nextTurn[currentTurn.name]
+          console.log(currentTurn)
+          changeTurnText(currentTurn)
         }
       }
     })

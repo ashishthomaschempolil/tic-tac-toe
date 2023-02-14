@@ -16,7 +16,7 @@
             <h1>Tic Tac Toe</h1>
         </div>
         <div class="main">
-            <h1 id="turn">X's turn</h1>
+            <h1 id="turn">X goes first!</h1>
             <div class="game-container">
                 <div class="cell" id="1"></div>
                 <div class="cell" id="2"></div>
@@ -28,8 +28,17 @@
                 <div class="cell" id="8"></div>
                 <div class="cell" id="9"></div>
             </div>
-            <div class="reset-button">
-                Reset
+            <div class="main-btm">
+                <div class="user-choice">
+                    <label for="user-choice">Choose your symbol :</label>
+                    <select name="user-choice" id="user-choice">
+                        <option value="X">X</option>
+                        <option value="O">O</option>
+                    </select>
+                </div>
+                <div class="reset-button">
+                    Reset
+                </div>
             </div>
         </div>
         <div class="footer">

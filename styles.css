@@ -59,7 +59,7 @@ a {
 }
 
 .main h1 {
-    font-size: 4rem;
+    font-size: 3rem;
     color: var(--white-color);
     text-align: center;
 }
@@ -86,7 +86,38 @@ a {
     border: 10px solid var(--black-color);
     border-radius: 20px;
     cursor: pointer;
-    padding: 0%;
+    width: 90%;
+    justify-self: center;
+}
+
+.main-btm {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%
+}
+
+.user-choice {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-around;
+    align-items: center;
+    width: 50%;
+    font-size: 2rem;
+    background-color: var(--black-color);
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.user-choice select {
+    width: fit-content;
+    font-size: 2rem;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    padding: 0 1rem;
 }
 
 .reset-button {

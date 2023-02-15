@@ -8,6 +8,7 @@
     --black-color: #171D1C;
     --primary-color: #5863F8;
     --secondary-color: #16BAC5;
+    --green: #86efac;
 }
 
 body {
@@ -88,6 +89,10 @@ a {
     cursor: pointer;
     width: 90%;
     justify-self: center;
+}
+
+.winner {
+    background-color: var(--green);
 }
 
 .main-btm {

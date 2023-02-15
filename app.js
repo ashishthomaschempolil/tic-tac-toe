@@ -63,6 +63,7 @@ const displayController = (() => {
   const changeDisplayOnReset = () => {
     cells.forEach((cell) => {
       cell.textContent = ''
+      cell.classList.remove('winner')
     })
     turnText.textContent = 'X goes first!'
     currentTurn = user.mark === 'X' ? user : ai
@@ -105,6 +106,10 @@ const displayController = (() => {
       ) {
         turnText.textContent = `${board[i * 3]} wins!`
         winner = true
+        //add class .winner to the winning cells
+        cells[i * 3].classList.add('winner')
+        cells[i * 3 + 1].classList.add('winner')
+        cells[i * 3 + 2].classList.add('winner')
       }
       // check for columns
       if (
@@ -114,6 +119,10 @@ const displayController = (() => {
       ) {
         turnText.textContent = `${board[i]} wins!`
         winner = true
+        //add class .winner to the winning cells
+        cells[i].classList.add('winner')
+        cells[i + 3].classList.add('winner')
+        cells[i + 6].classList.add('winner')
       }
     }
     // check for diagonals
@@ -124,6 +133,10 @@ const displayController = (() => {
     ) {
       turnText.textContent = `${board[0]} wins!`
       winner = true
+      //add class .winner to the winning cells
+      cells[0].classList.add('winner')
+      cells[4].classList.add('winner')
+      cells[8].classList.add('winner')
     }
     if (
       board[2] === board[4] &&
@@ -132,6 +145,10 @@ const displayController = (() => {
     ) {
       turnText.textContent = `${board[2]} wins!`
       winner = true
+      //add class .winner to the winning cells
+      cells[2].classList.add('winner')
+      cells[4].classList.add('winner')
+      cells[6].classList.add('winner')
     }
 
     // check for draw

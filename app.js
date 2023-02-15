@@ -21,16 +21,28 @@ const gameBoard = (() => {
     board[index] = mark
   }
 
-  return { getBoard, resetBoard, setBoard }
+  const getEmptyCells = () => {
+    const emptyCells = []
+    board.forEach((cell, index) => {
+      if (cell === '') {
+        emptyCells.push(index)
+      }
+    })
+    return emptyCells
+  }
+
+  return { getBoard, resetBoard, setBoard, getEmptyCells }
 })()
 
 // displayController module to handle DOM manipulation
 const displayController = (() => {
   let winner = false
-  const user = playerFactory('user', 'X')
-  const ai = playerFactory('ai', 'O')
-  const nextTurn = { user: ai, ai: user }
-  let currentTurn = user
+  const userChoiceSelect = document.querySelector('#user-choice')
+  const userMark = userChoiceSelect.value
+  let user = playerFactory('user', userMark)
+  let ai = playerFactory('ai', marks.filter((mark) => mark !== userMark)[0])
+  let nextTurn = { user: ai, ai: user }
+  let currentTurn = user.mark === 'X' ? user : ai
   const cells = document.querySelectorAll('.cell')
   const resetButton = document.querySelector('.reset-button')
   const turnText = document.querySelector('#turn')
@@ -41,12 +53,10 @@ const displayController = (() => {
     gameBoard.setBoard(index - 1, player.mark)
   }
 
-  // X goes first so user goes first
-
   // change the turn text to be displayed on top of the board
   const changeTurnText = (currentTurn) => {
     console.log(currentTurn)
-    turnText.textContent = `$${currentTurn.mark}'s turn`
+    turnText.textContent = `${currentTurn.mark}'s turn`
   }
 
   // resets the display of the cells when the reset button is clicked
@@ -54,18 +64,38 @@ const displayController = (() => {
     cells.forEach((cell) => {
       cell.textContent = ''
     })
-    turnText.textContent = 'X goes first'
-    currentTurn = user
+    turnText.textContent = 'X goes first!'
+    currentTurn = user.mark === 'X' ? user : ai
+    gameBoard.resetBoard()
     winner = false
+    if (currentTurn.name === 'ai') {
+      aiTurn(ai)
+      currentTurn = user
+      nextTurn = { user: ai, ai: user }
+      changeTurnText(currentTurn)
+    }
   }
 
-  // checks for the winner: if there is 3 in a row, column, or diagonal
-  // of the same mark
+  // AI logic
+  const aiTurn = (ai) => {
+    // randomly fills a cell that is not taken
+    // get empty cell indexes
+    const emptyCells = gameBoard.getEmptyCells()
+    // randomly select an index from the empty cells
+    const randomIndex = Math.floor(Math.random() * emptyCells.length)
+    // get the cell id
+    const cellId = emptyCells[randomIndex]
+    // change the display of the cell
+    changeGameBoardDisplay(cellId + 1, ai)
+
+    // check for winner
+    checkForWinner()
+  }
+
+  // checks for the winner: if there is 3 in a row, column, or diagonal or if its a draw
   const checkForWinner = () => {
     const board = gameBoard.getBoard()
-    // check for winning combos ie rows, columns, diagonals
-    // do not manually check for all 8 winning combos
-    // use a loop to check for all 8 winning combos
+
     for (let i = 0; i < 3; i++) {
       // check for rows
       if (
@@ -103,11 +133,25 @@ const displayController = (() => {
       turnText.textContent = `${board[2]} wins!`
       winner = true
     }
+
+    // check for draw
+    if (gameBoard.getEmptyCells().length === 0 && !winner) {
+      turnText.textContent = 'Draw!'
+      winner = true
+    }
   }
+
+  // event listeners
+  userChoiceSelect.addEventListener('change', (e) => {
+    const userMark = e.target.value
+    user = playerFactory('user', userMark)
+    ai = playerFactory('ai', marks.filter((mark) => mark !== userMark)[0])
+    changeDisplayOnReset()
+  })
 
   cells.forEach((cell) => {
     cell.addEventListener('click', (e) => {
-      if (e.target.textContent === '' && !winner) {
+      if (e.target.textContent === '' && !winner && currentTurn.name === 'user') {
         // get the id of the cell
         const cellId = Number(e.target.id)
         // change the display of the cell
@@ -120,6 +164,18 @@ const displayController = (() => {
           currentTurn = nextTurn[currentTurn.name]
           console.log(currentTurn)
           changeTurnText(currentTurn)
+
+          // AI turn
+          // wait 2 seconds before AI turn
+          setTimeout(() => {
+            // AI turn
+            aiTurn(ai)
+            // change the user if the game is not over
+            if (!winner) {
+              currentTurn = nextTurn[currentTurn.name]
+              changeTurnText(currentTurn)
+            }
+          }, 1000)
         }
       }
     })
